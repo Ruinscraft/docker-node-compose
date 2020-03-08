@@ -1,0 +1,36 @@
+version: '3'
+services:
+  pter-daemon:
+    image: ccarney16/pterodactyl-daemon:latest # TODO replace
+    ports:
+    -  8080:8080
+    privileged: true
+    restart: always
+    volumes:
+    - /srv/daemon/config:/srv/daemon/config
+    - /srv/daemon/packs:/srv/daemon/packs
+    - /srv/daemon-data:/srv/daemon-data
+    - /tmp/pterodactyl:/tmp/pterodactyl
+    - /etc/localtime:/etc/localtime
+    - ${DOCKER_ROOT:-/var/lib/docker}:${DOCKER_ROOT:-/var/lib/docker}
+    - ${DOCKER_SOCKET:-/var/run/docker.sock}:${DOCKER_SOCKET:-/var/run/docker.sock}
+  redis:
+    image: Ruinscraft/docker-ssh-tunnel:0.0.1
+    restart: always
+    volumes:
+      - $HOME/.ssh:/root/ssh:ro
+    environment:
+      TUNNEL_HOST: redis-tunnel
+      REMOTE_HOST: <storagehost>.ruinscraft.com
+      LOCAL_PORT: 6397
+      REMOTE_PORT: 6397
+  mysql:
+    image: Ruinscraft/docker-ssh-tunnel:0.0.1
+    restart: always
+    volumes:
+      - $HOME/.ssh:/root/ssh:ro
+    environment:
+      TUNNEL_HOST: mysql-tunnel
+      REMOTE_HOST: <storagehost>.ruinscraft.com
+      LOCAL_PORT: 3306
+      REMOTE_PORT: 3306
